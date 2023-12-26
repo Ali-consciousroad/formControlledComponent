@@ -1,5 +1,8 @@
 # Instructions
 
+## Notes
+This form is " controlled " as opposed to an " uncontrolled " form because all the input values are tied to the React state using the " useState " hook instead of using the DOM.
+
 ## Task
 
 You've learned how to create controlled components and forms in React.
