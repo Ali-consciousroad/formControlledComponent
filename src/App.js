@@ -9,9 +9,18 @@ const PasswordErrorMessage = () => {
  ); 
 }; 
 
+const FirstNameRequiredError = () => {
+  return (
+    <p className="FieldError">Your first name is required</p>
+  );
+};
+
 function App() { 
  // Define state variables for form fields and validation
- const [firstName, setFirstName] = useState(""); 
+ const [firstName, setFirstName] = useState({
+    value: "", 
+    isTouched: false,  
+ }); 
  const [lastName, setLastName] = useState(""); 
  const [email, setEmail] = useState(""); 
  const [password, setPassword] = useState({ 
@@ -24,15 +33,18 @@ function App() {
  const getIsFormValid = () => { 
    return ( 
      firstName && // Check if firstName is not empty
-     validateEmail(email) && // Validate the email using a custom function
+     validateEmail(email) && // Validate the email using a custom function if the first name exists
      password.value.length >= 8 && // Check if password has at least 8 characters
      role !== "role" // Check if a role other than the default "role" is selected
    ); 
  }; 
 
- // Define a function to clear form fields
+ // Define a function to clear form fields when the form is submitted
  const clearForm = () => { 
-   setFirstName(""); 
+   setFirstName({
+      value: "", 
+      isTouched: false, 
+   }); 
    setLastName(""); 
    setEmail(""); 
    setPassword({ 
@@ -44,7 +56,7 @@ function App() {
 
  // Define a function to handle form submission
  const handleSubmit = (e) => { 
-   e.preventDefault(); 
+   e.preventDefault(); // Prevent the default form submit behavior to avoid page reload when submitting the form
    alert("Account created!"); 
    clearForm(); 
  }; 
@@ -59,12 +71,20 @@ function App() {
              First name <sup>*</sup> 
            </label> 
            <input 
-             value={firstName} 
+             value={firstName.value} 
+             type="text"
              onChange={(e) => { 
-               setFirstName(e.target.value); 
+               setFirstName({ ...firstName, value: e.target.value }); 
              }} 
+             // Set isTouched to true when the input field is blurred
+              onBlur={() => { 
+                setFirstName({ ...firstName, isTouched: true }); 
+              }}
              placeholder="First name" 
            /> 
+           {firstName.isTouched && firstName.value.length < 1 ? (
+            <FirstNameRequiredError />
+           ) : null}
          </div> 
          <div className="Field"> 
            <label>Last name</label> 
@@ -98,6 +118,7 @@ function App() {
              onChange={(e) => { 
                setPassword({ ...password, value: e.target.value }); 
              }} 
+             // Set isTouched to true when the input field is blurred
              onBlur={() => { 
                setPassword({ ...password, isTouched: true }); 
              }} 
